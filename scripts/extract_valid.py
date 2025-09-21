@@ -69,7 +69,7 @@ def save_m3u(valid_channels, filename="valid.m3u"):
 
 def main():
     init_db()  # 确保表存在
-    rows = load_channels(limit=100)
+    rows = load_channels(limit=1100)
     grouped = group_channels(rows)
 
     valid_channels = {}
@@ -89,3 +89,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
