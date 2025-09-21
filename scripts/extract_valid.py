@@ -4,7 +4,22 @@ import requests
 
 DB_FILE = "scripts/channels.db"
 
-def load_channels(limit=100): 
+def init_db():
+    """保证 channels 表存在"""
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS channels (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            source_file TEXT,
+            channel_name TEXT,
+            url TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+def load_channels(limit=100):
     """从数据库加载频道"""
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
@@ -53,6 +68,7 @@ def save_m3u(valid_channels, filename="valid.m3u"):
     print(f"[保存成功] {filename}, 可用频道数: {len(valid_channels)}")
 
 def main():
+    init_db()  # 确保表存在
     rows = load_channels(limit=100)
     grouped = group_channels(rows)
 
@@ -73,5 +89,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
