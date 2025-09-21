@@ -1,8 +1,8 @@
-name: Test 1 of t1.py
+name: Run t1.py
 
 on:
   schedule:
-    - cron: '0 2 * * *'   # 每天凌晨2点
+    - cron: '0 2 * * *'   # 每天凌晨 2 点
   workflow_dispatch:       # 手动触发
 
 jobs:
@@ -19,4 +19,4 @@ jobs:
           python-version: '3.x'
 
       - name: Run t1.py
-        run: python t1.py
+        run: python scripts/t1.py
