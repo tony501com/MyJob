@@ -2,7 +2,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import sqlite3
 import requests
 
-DB_FILE = "channels.db"
+DB_FILE = "scripts/channels.db"
 
 def load_channels(limit=100):
     """从数据库加载频道"""
@@ -73,3 +73,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
