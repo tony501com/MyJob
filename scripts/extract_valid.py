@@ -25,7 +25,7 @@ def init_db():
     conn.close()
 
 
-def load_channels(limit=1000):
+def load_channels(limit=2000):
     """从数据库加载频道"""
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
@@ -43,13 +43,33 @@ def check_url(url, timeout=5):
     try:
         r = requests.get(url, stream=True, timeout=timeout)
         if r.status_code == 200:
-            # 尝试读取一点点数据
             chunk = next(r.iter_content(chunk_size=2048), None)
             if chunk:
                 return True
     except Exception:
         return False
     return False
+
+
+# ----------------------
+# 自动分组
+# ----------------------
+def get_group(name: str) -> str:
+    """根据频道名推断分组"""
+    if "CCTV" in name.upper() or "央视" in name:
+        return "央视"
+    elif "卫视" in name:
+        return "卫视"
+    elif any(x in name for x in ["香港", "TVB", "翡翠", "凤凰"]):
+        return "港澳台"
+    elif any(x in name for x in ["体育", "足球", "NBA"]):
+        return "体育"
+    elif any(x in name for x in ["新闻", "资讯"]):
+        return "新闻"
+    elif any(x in name for x in ["电影", "影院"]):
+        return "电影"
+    else:
+        return "其他"
 
 
 # ----------------------
@@ -62,15 +82,16 @@ def main():
     print(f"读取到 {len(rows)} 条记录")
 
     valid_entries = ["#EXTM3U"]
-    seen_urls = set()  # 用来去重
+    seen_urls = set()  # 去重
 
     def process_row(row):
         name, url = row
-        if url in seen_urls:  # 去重
+        if url in seen_urls:
             return None
         if check_url(url):
             seen_urls.add(url)
-            return f"#EXTINF:-1,{name}\n{url}"
+            group = get_group(name)
+            return f'#EXTINF:-1 group-title="{group}",{name}\n{url}'
         return None
 
     with ThreadPoolExecutor(max_workers=20) as executor:
