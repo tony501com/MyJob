@@ -4,7 +4,7 @@ import requests
 
 DB_FILE = "scripts/channels.db"
 
-def load_channels(limit=100):
+def load_channels(limit=100): 
     """从数据库加载频道"""
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
@@ -73,4 +73,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
