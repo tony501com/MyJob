@@ -86,9 +86,7 @@ def main():
                 valid_channels[name] = url
 
     save_m3u(valid_channels)
-    with open("valid2.m3u", "w", encoding="utf-8") as f:
-        f.write("#EXTM3U\n")
-        # 写入内容 ...
 
 if __name__ == "__main__":
     main()
+
