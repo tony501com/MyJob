@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 DB_FILE = "scripts/channels.db"
 VALID_FILE = "scripts/valid.m3u"
 
+
 # ----------------------
 # 数据库相关
 # ----------------------
@@ -40,20 +41,14 @@ def load_channels(limit=1000):
 def check_url(url, timeout=5):
     """检测直播源是否可用"""
     try:
-        r = requests.head(url, timeout=timeout, allow_redirects=True)
-        if r.status_code == 200:
-            return True
-    except Exception:
-        pass
-
-    try:
         r = requests.get(url, stream=True, timeout=timeout)
         if r.status_code == 200:
-            for _ in r.iter_content(chunk_size=512):
+            # 尝试读取一点点数据
+            chunk = next(r.iter_content(chunk_size=2048), None)
+            if chunk:
                 return True
     except Exception:
         return False
-
     return False
 
 
@@ -63,14 +58,18 @@ def check_url(url, timeout=5):
 def main():
     init_db()  # 确保表存在
 
-    rows = load_channels(limit=1100)
+    rows = load_channels(limit=2000)
     print(f"读取到 {len(rows)} 条记录")
 
     valid_entries = ["#EXTM3U"]
+    seen_urls = set()  # 用来去重
 
     def process_row(row):
         name, url = row
+        if url in seen_urls:  # 去重
+            return None
         if check_url(url):
+            seen_urls.add(url)
             return f"#EXTINF:-1,{name}\n{url}"
         return None
 
