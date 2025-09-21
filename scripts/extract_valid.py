@@ -1,9 +1,13 @@
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import sqlite3
 import requests
+from concurrent.futures import ThreadPoolExecutor
 
 DB_FILE = "scripts/channels.db"
+VALID_FILE = "scripts/valid.m3u"
 
+# ----------------------
+# 数据库相关
+# ----------------------
 def init_db():
     """保证 channels 表存在"""
     conn = sqlite3.connect(DB_FILE)
@@ -19,7 +23,8 @@ def init_db():
     conn.commit()
     conn.close()
 
-def load_channels(limit=100):
+
+def load_channels(limit=1000):
     """从数据库加载频道"""
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
@@ -28,13 +33,10 @@ def load_channels(limit=100):
     conn.close()
     return rows
 
-def group_channels(rows):
-    """按 channel_name 分组"""
-    grouped = {}
-    for channel_name, url in rows:
-        grouped.setdefault(channel_name, []).append(url)
-    return grouped
 
+# ----------------------
+# 检测直播源
+# ----------------------
 def check_url(url, timeout=5):
     """检测直播源是否可用"""
     try:
@@ -43,6 +45,7 @@ def check_url(url, timeout=5):
             return True
     except Exception:
         pass
+
     try:
         r = requests.get(url, stream=True, timeout=timeout)
         if r.status_code == 200:
@@ -50,43 +53,40 @@ def check_url(url, timeout=5):
                 return True
     except Exception:
         return False
+
     return False
 
-def check_group(name, urls):
-    """检测某个频道的所有候选 URL，取第一个有效的"""
-    for url in urls:
-        if check_url(url):
-            return name, url
-    return None
 
-def save_m3u(valid_channels, filename="valid.m3u"):
-    """保存结果到 M3U 文件"""
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write("#EXTM3U\n")
-        for name, url in valid_channels.items():
-            f.write(f"#EXTINF:-1,{name}\n{url}\n")
-    print(f"[保存成功] {filename}, 可用频道数: {len(valid_channels)}")
-
+# ----------------------
+# 主流程
+# ----------------------
 def main():
     init_db()  # 确保表存在
-    rows = load_channels(limit=1100)
-    grouped = group_channels(rows)
 
-    valid_channels = {}
+    rows = load_channels(limit=1100)
+    print(f"读取到 {len(rows)} 条记录")
+
+    valid_entries = ["#EXTM3U"]
+
+    def process_row(row):
+        name, url = row
+        if check_url(url):
+            return f"#EXTINF:-1,{name}\n{url}"
+        return None
 
     with ThreadPoolExecutor(max_workers=20) as executor:
-        future_to_name = {
-            executor.submit(check_group, name, urls): name
-            for name, urls in grouped.items()
-        }
-        for future in as_completed(future_to_name):
-            result = future.result()
-            if result:
-                name, url = result
-                valid_channels[name] = url
+        results = executor.map(process_row, rows)
 
-    save_m3u(valid_channels)
+    for r in results:
+        if r:
+            valid_entries.append(r)
+
+    # 保存到 m3u 文件
+    with open(VALID_FILE, "w", encoding="utf-8") as f:
+        f.write("\n".join(valid_entries))
+
+    print(f"[完成] 可用频道数: {len(valid_entries)-1}, 已保存到 {VALID_FILE}")
+
 
 if __name__ == "__main__":
     main()
-
