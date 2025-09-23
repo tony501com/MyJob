@@ -78,7 +78,7 @@ def get_group(name: str) -> str:
 def main():
     init_db()  # 确保表存在
 
-    rows = load_channels(limit=2000)
+    rows = load_channels(limit=1000)
     print(f"读取到 {len(rows)} 条记录")
 
     valid_entries = ["#EXTM3U"]
@@ -110,5 +110,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
