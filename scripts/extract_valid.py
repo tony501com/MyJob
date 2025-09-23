@@ -3,7 +3,7 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 
 DB_FILE = "scripts/channels.db"
-VALID_FILE = "scripts/valid.m3u"
+VALID_FILE = "scripts/国内电视台a.m3u"
 
 
 # ----------------------
@@ -110,4 +110,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
