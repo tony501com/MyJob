@@ -29,7 +29,7 @@ def load_channels(limit=2000):
     """从数据库加载频道"""
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute("SELECT channel_name, url FROM channels ORDER BY id LIMIT ?", (limit,))
+    cursor.execute("SELECT channel_name, url FROM channels where source_file = '国内电视台2025.9.m3u' ORDER BY id LIMIT ?", (limit,))
     rows = cursor.fetchall()
     conn.close()
     return rows
@@ -110,3 +110,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
