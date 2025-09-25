@@ -1,4 +1,4 @@
-name: Run t1.py
+name: Run get_v2_3.py
 
 on:
   schedule:
@@ -18,5 +18,5 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Run t1.py
-        run: python scripts/t1.py
+      - name: Run get_v2_3.py
+        run: python scripts/get_v2_3.py
