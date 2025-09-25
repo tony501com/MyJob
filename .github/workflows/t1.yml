@@ -1,12 +1,12 @@
 name: Run get_v2_3.py
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  schedule:
+    - cron: "0 2 * * *"   # 每天凌晨 2 点执行
+  workflow_dispatch:       # 支持手动触发
+
+permissions:
+  contents: write
 
 jobs:
   run_script:
