@@ -97,10 +97,10 @@ def download_and_concat(urls):
             print(f"下载失败: {url} 错误: {e}")
 
     # 拼接所有非空行
-    combined = "\n".join(all_lines)
+    combined1 = "\n".join(all_lines)
 
     # 在返回前做 Base64 编码
-    encoded = base64.b64encode(combined.encode("utf-8")).decode("utf-8")
+    encoded = base64.b64encode(combined1.encode("utf-8")).decode("utf-8")
 
     return encoded
 
@@ -119,3 +119,4 @@ if __name__ == "__main__":
             print("未找到下载地址")
     else:
         print("未找到首页链接")
+
