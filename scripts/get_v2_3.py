@@ -4,6 +4,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
+import chromedriver_autoinstaller
+
+chromedriver_autoinstaller.install()
 
 def is_base64(s: str) -> bool:
     """判断字符串是否是有效的 Base64 编码"""
