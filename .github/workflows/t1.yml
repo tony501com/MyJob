@@ -19,7 +19,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install selenium requests
+        run: pip install bs4 selenium requests
 
       - name: Run get_v2_3.py
         run: python scripts/get_v2_3.py
