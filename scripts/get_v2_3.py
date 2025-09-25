@@ -96,9 +96,13 @@ def download_and_concat(urls):
         except Exception as e:
             print(f"下载失败: {url} 错误: {e}")
 
-    # 用换行符拼接所有非空行
-    return "\n".join(all_lines)
+    # 拼接所有非空行
+    combined = "\n".join(all_lines)
 
+    # 在返回前做 Base64 编码
+    encoded = base64.b64encode(combined.encode("utf-8")).decode("utf-8")
+
+    return encoded
 
 if __name__ == "__main__":
     link = fetch_first_link()
