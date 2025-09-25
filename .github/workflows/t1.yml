@@ -1,25 +1,42 @@
 name: Run get_v2_3.py
 
 on:
-  schedule:
-    - cron: '0 2 * * *'   # 每天凌晨 2 点
-  workflow_dispatch:       # 手动触发
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
+  run_script:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+    # Step 1: Checkout the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+    # Step 2: Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.13'  # You can specify another Python version here
 
-      - name: Install dependencies
-        run: pip install bs4 selenium requests chromedriver-autoinstaller
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install chromedriver-autoinstaller  # In case chromedriver is needed for selenium
 
-      - name: Run get_v2_3.py
-        run: python scripts/get_v2_3.py
+    # Step 4: Run the script
+    - name: Run Python script
+      run: |
+        python scripts/get_v2_3.py
+
+    # Step 5: Upload the result (optional, if you want to save the result as artifact)
+    - name: Upload v2.txt
+      uses: actions/upload-artifact@v2
+      with:
+        name: v2-file
+        path: v2.txt
