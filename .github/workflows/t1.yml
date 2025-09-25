@@ -18,5 +18,8 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Install dependencies
+        run: pip install requests
+
       - name: Run get_v2_3.py
         run: python scripts/get_v2_3.py
