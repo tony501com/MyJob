@@ -114,7 +114,7 @@ if __name__ == "__main__":
             combined = download_and_concat(urls)
 
             # 保存到文件 v2.txt
-            with open("v2.txt", "w", encoding="utf-8") as f:
+            with open("scripts/v2.txt", "w", encoding="utf-8") as f:
                 f.write(combined)
 
         else:
