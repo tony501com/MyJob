@@ -1,3 +1,4 @@
+
 name: Daily V2 Fetch
 
 on:
@@ -26,19 +27,19 @@ jobs:
       - name: Run get_v2_3.py
         run: python scripts/get_v2_3.py
 
-      - name: Ensure v2.txt exists and is not empty
+      - name: Ensure scripts/v2.txt exists and is not empty
         run: |
-          if [ ! -s v2.txt ]; then
-            echo "v2.txt is missing or empty!"
+          if [ ! -s scripts/v2.txt ]; then
+            echo "scripts/v2.txt is missing or empty!"
             exit 1
           fi
 
-      - name: Commit and push v2.txt if changed
+      - name: Commit and push scripts/v2.txt if changed
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          if git status --porcelain=v1 | grep -q "v2.txt"; then
-            git add v2.txt
-            git commit -m "chore: update v2.txt [auto]" || exit 0
+          if git status --porcelain=v1 | grep -q "scripts/v2.txt"; then
+            git add scripts/v2.txt
+            git commit -m "chore: update scripts/v2.txt [auto]" || exit 0
             git push
           fi
