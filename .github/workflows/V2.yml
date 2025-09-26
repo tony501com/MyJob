@@ -6,6 +6,9 @@ on:
     - cron: '0 2 * * *'  # 每天UTC时间2点执行（北京时间10点）
   workflow_dispatch:      # 允许手动触发
 
+permissions:
+  contents: write
+
 jobs:
   run-v2-fetch:
     runs-on: ubuntu-latest
